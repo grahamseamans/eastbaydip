@@ -23,7 +23,16 @@
                 <form action="/admin/edit/<%= post.id %>" method="POST">
                     <div class="form-group">
                         <label for="content">Post content (Markdown):</label>
-                        <textarea id="content" name="content" rows="15" required><%= post.markdown_content %></textarea>
+                        <div class="markdown-editor">
+                            <div class="editor-panel">
+                                <textarea id="content" name="content" rows="15"
+                                    required><%= post.markdown_content %></textarea>
+                            </div>
+                            <div class="preview-panel">
+                                <div class="preview-header">Preview</div>
+                                <div id="content-preview" class="markdown-preview"></div>
+                            </div>
+                        </div>
                         <small>Use Markdown formatting. For example: # Heading, **bold**, *italic*, [link](url) |
                             <a href="https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf"
                                 target="_blank">📄 Markdown Cheatsheet</a>
@@ -48,6 +57,37 @@
             </section>
         </main>
     </div>
+
+    <!-- Markdown Preview Functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Markdown Preview Functionality
+        function updatePreview(textareaId, previewId) {
+            const textarea = document.getElementById(textareaId);
+            const preview = document.getElementById(previewId);
+
+            if (textarea && preview) {
+                const markdownText = textarea.value;
+                const htmlContent = marked.parse(markdownText);
+                preview.innerHTML = htmlContent;
+            }
+        }
+
+        // Initialize preview when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            const contentTextarea = document.getElementById('content');
+
+            if (contentTextarea) {
+                // Initial preview
+                updatePreview('content', 'content-preview');
+
+                // Real-time updates
+                contentTextarea.addEventListener('input', function () {
+                    updatePreview('content', 'content-preview');
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>

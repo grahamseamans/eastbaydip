@@ -28,7 +28,16 @@
                 <form action="/admin/main-content" method="POST">
                     <div class="form-group">
                         <label for="main-content">Edit main page content (Markdown):</label>
-                        <textarea id="main-content" name="content" rows="15" required><%= mainContent %></textarea>
+                        <div class="markdown-editor">
+                            <div class="editor-panel">
+                                <textarea id="main-content" name="content" rows="15"
+                                    required><%= mainContent %></textarea>
+                            </div>
+                            <div class="preview-panel">
+                                <div class="preview-header">Preview</div>
+                                <div id="main-content-preview" class="markdown-preview"></div>
+                            </div>
+                        </div>
                         <small>Use Markdown formatting. For example: # Heading, **bold**, *italic*, [link](url) |
                             <a href="https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf"
                                 target="_blank">📄 Markdown Cheatsheet</a>
@@ -44,8 +53,16 @@
                 <form action="/admin/posts" method="POST">
                     <div class="form-group">
                         <label for="new-post">New post content (Markdown):</label>
-                        <textarea id="new-post" name="content" rows="8"
-                            placeholder="# Weekly Dip - January 15th&#10;&#10;This week we're meeting at..."></textarea>
+                        <div class="markdown-editor">
+                            <div class="editor-panel">
+                                <textarea id="new-post" name="content" rows="8"
+                                    placeholder="# Weekly Dip - January 15th&#10;&#10;This week we're meeting at..."></textarea>
+                            </div>
+                            <div class="preview-panel">
+                                <div class="preview-header">Preview</div>
+                                <div id="new-post-preview" class="markdown-preview"></div>
+                            </div>
+                        </div>
                         <small>Write your post in Markdown. Include headings with # and formatting as needed. |
                             <a href="https://enterprise.github.com/downloads/en/markdown-cheatsheet.pdf"
                                 target="_blank">📄 Markdown Cheatsheet</a>
@@ -111,7 +128,8 @@
             </section>
         </main>
 
-        <!-- Success/Error Messages -->
+        <!-- Success/Error Messages and Markdown Preview -->
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script>
             // Check for URL parameters to show messages
             const urlParams = new URLSearchParams(window.location.search);
@@ -129,6 +147,45 @@
                 // Remove the parameter from URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
+
+            // Markdown Preview Functionality
+            function updatePreview(textareaId, previewId) {
+                const textarea = document.getElementById(textareaId);
+                const preview = document.getElementById(previewId);
+
+                if (textarea && preview) {
+                    const markdownText = textarea.value;
+                    const htmlContent = marked.parse(markdownText);
+                    preview.innerHTML = htmlContent;
+                }
+            }
+
+            // Initialize previews when page loads
+            document.addEventListener('DOMContentLoaded', function () {
+                // Main content editor
+                const mainContentTextarea = document.getElementById('main-content');
+                const newPostTextarea = document.getElementById('new-post');
+
+                if (mainContentTextarea) {
+                    // Initial preview
+                    updatePreview('main-content', 'main-content-preview');
+
+                    // Real-time updates
+                    mainContentTextarea.addEventListener('input', function () {
+                        updatePreview('main-content', 'main-content-preview');
+                    });
+                }
+
+                if (newPostTextarea) {
+                    // Initial preview (will be empty for new posts)
+                    updatePreview('new-post', 'new-post-preview');
+
+                    // Real-time updates
+                    newPostTextarea.addEventListener('input', function () {
+                        updatePreview('new-post', 'new-post-preview');
+                    });
+                }
+            });
         </script>
     </div>
 </body>
