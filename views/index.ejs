@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>East Bay Dipping Society</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <header>
+        <h1>🌊 East Bay Dipping Society</h1>
+    </header>
+
+    <main>
+        <!-- Main Content Section -->
+        <section class="main-content">
+            <%- mainContent %>
+        </section>
+
+        <!-- Posts Section -->
+        <% if (posts && posts.length> 0) { %>
+            <section class="posts-section">
+                <h2>Recent Events & Updates</h2>
+                <% posts.forEach(post=> { %>
+                    <article class="post">
+                        <%- post.html %>
+                            <div class="post-meta">
+                                <small>Posted on <%= new Date(post.created_at).toLocaleDateString() %></small>
+                            </div>
+                    </article>
+                    <% }); %>
+            </section>
+            <% } %>
+    </main>
+
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> East Bay Dipping Society</p>
+    </footer>
+</body>
+
+</html>
